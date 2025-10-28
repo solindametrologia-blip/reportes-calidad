@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Inspección de Calidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .info-card .value {
+            font-size: 16px;
+            color: #212529;
+            font-weight: 500;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .cotas-container {
+            margin-top: 30px;
+        }
+
+        .cotas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cotas-header h3 {
+            color: #212529;
+            font-size: 20px;
+        }
+
+        .cota-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .cota-item {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .cota-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .cota-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .cota-row {
+            display: grid;
+            grid-template-columns: 150px 100px 100px 100px 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .measurements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .measurement-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .measurement-item label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .measurement-item input {
+            padding: 8px;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .measurement-item input.valid {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .measurement-item input.invalid {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .tolerance-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .tolerance-badge.valid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .tolerance-badge.invalid {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .summary-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-section h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .actions-bar, .btn {
+                display: none;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Reporte de Inspección de Calidad</h1>
+            <p>Sistema de Control de Mediciones</p>
+        </div>
+
+        <div class="content">
+            <!-- Información General del Item -->
+            <div class="info-grid" id="infoGrid">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <!-- Controles de Configuración -->
+            <div class="controls-section">
+                <div class="controls-grid">
+                    <div class="form-group">
+                        <label for="numCotas">Número de Cotas:</label>
+                        <input type="number" id="numCotas" min="1" max="27" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="unidadMedida">Unidad de Medida:</label>
+                        <select id="unidadMedida">
+                            <option value="MM">MM</option>
+                            <option value="INCH">INCH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="toleranciaComun">Tolerancia Común:</label>
+                        <select id="toleranciaComun">
+                            <option value="">Seleccionar...</option>
+                            <option value="0.30">±0.30</option>
+                            <option value="0.254">±0.254</option>
+                            <option value="0.25">±0.25</option>
+                            <option value="0.13">±0.13</option>
+                            <option value="0.1">±0.1</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipoInspeccion">Tipo de Inspección:</label>
+                        <select id="tipoInspeccion">
+                            <option value="ALT">ALT</option>
+                            <option value="VER">VER</option>
+                            <option value="MICR">MICR</option>
+                            <option value="VIS">VIS</option>
+                            <option value="FLEX">FLEX</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="realizadoPor">Realizado Por:</label>
+                        <select id="realizadoPor">
+                            <option value="Eduardo Nava">Eduardo Nava</option>
+                            <option value="Alberto Herrera">Alberto Herrera</option>
+                            <option value="Javier López">Javier López</option>
+                            <option value="Sandra Mora">Sandra Mora</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor de Cotas -->
+            <div class="cotas-container">
+                <div class="cotas-header">
+                    <h3>🔍 Mediciones de Cotas</h3>
+                    <div class="cota-controls">
+                        <button class="btn btn-primary" onclick="generarCotas()">🔄 Regenerar Cotas</button>
+                        <button class="btn btn-success" onclick="validarTodo()">✓ Validar Todo</button>
+                    </div>
+                </div>
+                <div id="cotasContainer">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Resumen de Validación -->
+            <div class="summary-section" id="summarySection" style="display: none;">
+                <h4>📊 Resumen de Validación</h4>
+                <div class="summary-stats" id="summaryStats">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="actions-bar">
+                <button class="btn btn-success" onclick="exportarPDF()">📄 Exportar a PDF</button>
+                <button class="btn btn-primary" onclick="exportarExcel()">📊 Exportar a Excel</button>
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="btn btn-danger" onclick="cerrarReporte()">❌ Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let datosItem = {};
+        let piezasInspeccionadas = 1;
+
+        // Inicializar al cargar la página
+        window.onload = function() {
+            cargarDatosDesdeURL();
+            generarCotas();
+        };
+
+        // Cargar datos desde URL parameters o localStorage
+        function cargarDatosDesdeURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Intentar obtener datos de URL
+            if (urlParams.has('data')) {
+                try {
+                    datosItem = JSON.parse(decodeURIComponent(urlParams.get('data')));
+                } catch (e) {
+                    console.error('Error al parsear datos:', e);
+                }
+            }
+            
+            // Si no hay datos en URL, intentar desde localStorage
+            if (!datosItem.cliente) {
+                const storedData = localStorage.getItem('reporteItemData');
+                if (storedData) {
+                    try {
+                        datosItem = JSON.parse(storedData);
+                    } catch (e) {
+                        console.error('Error al cargar desde localStorage:', e);
+                    }
+                }
+            }
+
+            // Si aún no hay datos, usar datos de ejemplo
+            if (!datosItem.cliente) {
+                datosItem = {
+                    cliente: 'Cliente Ejemplo',
+                    ot: 'OT-2024-001',
+                    plano: 'DWG-12345',
+                    piezas: 'PIEZA-ABC',
+                    tamano_lote: 100,
+                    piezas_inspeccionadas: 3,
+                    rango_dureza: '45-50 HRC',
+                    fecha_liberacion: new Date().toISOString().split('T')[0]
+                };
+            }
+
+            piezasInspeccionadas = parseInt(datosItem.piezas_inspeccionadas) || 3;
+            if (piezasInspeccionadas < 1) piezasInspeccionadas = 1;
+            if (piezasInspeccionadas > 5) piezasInspeccionadas = 5;
+
+            mostrarInformacion();
+        }
+
+        // Mostrar información del item
+        function mostrarInformacion() {
+            const infoGrid = document.getElementById('infoGrid');
+            infoGrid.innerHTML = `
+                <div class="info-card">
+                    <label>Cliente</label>
+                    <div class="value">${datosItem.cliente || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Orden de Trabajo</label>
+                    <div class="value">${datosItem.ot || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Número de Plano</label>
+                    <div class="value">${datosItem.plano || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Número de Parte</label>
+                    <div class="value">${datosItem.piezas || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Tamaño de Lote</label>
+                    <div class="value">${datosItem.tamano_lote || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Piezas Inspeccionadas</label>
+                    <div class="value">${piezasInspeccionadas}</div>
+                </div>
+                <div class="info-card">
+                    <label>Rango de Dureza</label>
+                    <div class="value">${datosItem.rango_dureza || 'N/A'}</div>
+                </div>
+                <div class="info-card">
+                    <label>Fecha de Liberación</label>
+                    <div class="value">${datosItem.fecha_liberacion || 'N/A'}</div>
+                </div>
+            `;
+        }
+
+        // Generar cotas dinámicamente
+        function generarCotas() {
+            const numCotas = parseInt(document.getElementById('numCotas').value) || 3;
+            const container = document.getElementById('cotasContainer');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= numCotas; i++) {
+                const cotaDiv = crearCotaElement(i);
+                container.appendChild(cotaDiv);
+            }
+        }
+
+        // Crear elemento de cota
+        function crearCotaElement(index) {
+            const div = document.createElement('div');
+            div.className = 'cota-item';
+            div.innerHTML = `
+                <div class="cota-title">Cota ${index}</div>
+                <div class="cota-row">
+                    <div class="form-group">
+                        <label>Tipo de Cota:</label>
+                        <select id="tipo_${index}" onchange="actualizarCota(${index})">
+                            <option value="DIÁMETRO">DIÁMETRO</option>
+                            <option value="RADIO">RADIO</option>
+                            <option value="DISTANCIA" selected>DISTANCIA</option>
+                            <option value="ÁNGULO">ÁNGULO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal:</label>
+                        <input type="number" id="nominal_${index}" step="0.001" 
+                               onchange="actualizarCota(${index})" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>Tol. Min:</label>
+                        <input type="number" id="tolmin_${index}" step="0.001" 
+                               onchange="actualizarCota(${index})" placeholder="-0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>Tol. Max:</label>
+                        <input type="number" id="tolmax_${index}" step="0.001" 
+                               onchange="actualizarCota(${index})" placeholder="+0.000">
+                    </div>
+                </div>
+                <div class="measurements-grid" id="measurements_${index}">
+                    ${generarMediciones(index)}
+                </div>
+            `;
+            return div;
+        }
+
+        // Generar campos de medición
+        function generarMediciones(cotaIndex) {
+            let html = '';
+            for (let i = 1; i <= piezasInspeccionadas; i++) {
+                html += `
+                    <div class="measurement-item">
+                        <label>Pieza ${i}:</label>
+                        <input type="number" id="medicion_${cotaIndex}_${i}" 
+                               step="0.001" placeholder="0.000"
+                               onchange="validarMedicion(${cotaIndex}, ${i})">
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        // Actualizar cota cuando cambian sus valores
+        function actualizarCota(index) {
+            const nominal = parseFloat(document.getElementById(`nominal_${index}`).value);
+            
+            // Llenar automáticamente las mediciones con el valor nominal
+            if (!isNaN(nominal)) {
+                for (let i = 1; i <= piezasInspeccionadas; i++) {
+                    const medicionInput = document.getElementById(`medicion_${index}_${i}`);
+                    if (!medicionInput.value) {
+                        medicionInput.value = nominal.toFixed(3);
+                    }
+                    validarMedicion(index, i);
+                }
+            }
+        }
+
+        // Validar medición individual
+        function validarMedicion(cotaIndex, piezaIndex) {
+            const nominal = parseFloat(document.getElementById(`nominal_${cotaIndex}`).value);
+            const tolMin = parseFloat(document.getElementById(`tolmin_${cotaIndex}`).value);
+            const tolMax = parseFloat(document.getElementById(`tolmax_${cotaIndex}`).value);
+            const medicion = parseFloat(document.getElementById(`medicion_${cotaIndex}_${piezaIndex}`).value);
+            const input = document.getElementById(`medicion_${cotaIndex}_${piezaIndex}`);
+
+            if (isNaN(nominal) || isNaN(tolMin) || isNaN(tolMax) || isNaN(medicion)) {
+                input.className = 'measurement-item input';
+                return;
+            }
+
+            const limiteInferior = nominal + tolMin;
+            const limiteSuperior = nominal + tolMax;
+            const esValido = medicion >= limiteInferior && medicion <= limiteSuperior;
+
+            input.classList.remove('valid', 'invalid');
+            input.classList.add(esValido ? 'valid' : 'invalid');
+        }
+
+        // Validar todas las mediciones
+        function validarTodo() {
+            const numCotas = parseInt(document.getElementById('numCotas').value);
+            let totalCampos = 0;
+            let camposValidos = 0;
+            let camposInvalidos = 0;
+
+            for (let i = 1; i <= numCotas; i++) {
+                const nominal = parseFloat(document.getElementById(`nominal_${i}`).value);
+                const tolMin = parseFloat(document.getElementById(`tolmin_${i}`).value);
+                const tolMax = parseFloat(document.getElementById(`tolmax_${i}`).value);
+
+                if (!isNaN(nominal) && !isNaN(tolMin) && !isNaN(tolMax)) {
+                    for (let j = 1; j <= piezasInspeccionadas; j++) {
+                        const medicion = parseFloat(document.getElementById(`medicion_${i}_${j}`).value);
+                        if (!isNaN(medicion)) {
+                            totalCampos++;
+                            validarMedicion(i, j);
+                            
+                            const input = document.getElementById(`medicion_${i}_${j}`);
+                            if (input.classList.contains('valid')) {
+                                camposValidos++;
+                            } else if (input.classList.contains('invalid')) {
+                                camposInvalidos++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            mostrarResumen(totalCampos, camposValidos, camposInvalidos);
+        }
+
+        // Mostrar resumen de validación
+        function mostrarResumen(total, validos, invalidos) {
+            const summarySection = document.getElementById('summarySection');
+            const summaryStats = document.getElementById('summaryStats');
+            
+            summaryStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${total}</div>
+                    <div class="stat-label">Total Mediciones</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #28a745;">${validos}</div>
+                    <div class="stat-label">Válidas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #dc3545;">${invalidos}</div>
+                    <div class="stat-label">Fuera de Tolerancia</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${total > 0 ? ((validos / total) * 100).toFixed(1) : 0}%</div>
+                    <div class="stat-label">Aprobación</div>
+                </div>
+            `;
+            
+            summarySection.style.display = 'block';
+
+            if (invalidos > 0) {
+                alert(`⚠️ Se encontraron ${invalidos} mediciones fuera de tolerancia.`);
+            } else if (total > 0) {
+                alert('✓ Todas las mediciones están dentro de tolerancia.');
+            }
+        }
+
+        // Aplicar tolerancia común a todas las cotas
+        document.getElementById('toleranciaComun').addEventListener('change', function() {
+            const tolerancia = parseFloat(this.value);
+            if (!isNaN(tolerancia)) {
+                const numCotas = parseInt(document.getElementById('numCotas').value);
+                for (let i = 1; i <= numCotas; i++) {
+                    document.getElementById(`tolmin_${i}`).value = (-tolerancia).toFixed(3);
+                    document.getElementById(`tolmax_${i}`).value = tolerancia.toFixed(3);
+                    actualizarCota(i);
+                }
+            }
+        });
+
+        // Exportar a PDF
+        function exportarPDF() {
+            alert('📄 Exportando a PDF...\n\nPuedes usar la función de imprimir del navegador y seleccionar "Guardar como PDF".');
+            window.print();
+        }
+
+        // Exportar a Excel
+        function exportarExcel() {
+            const numCotas = parseInt(document.getElementById('numCotas').value);
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Encabezados
+            csvContent += "Cliente,OT,Plano,Parte,Tamaño Lote,Piezas Inspeccionadas,Dureza,Fecha\n";
+            csvContent += `${datosItem.cliente},${datosItem.ot},${datosItem.plano},${datosItem.piezas},${datosItem.tamano_lote},${piezasInspeccionadas},${datosItem.rango_dureza},${datosItem.fecha_liberacion}\n\n`;
+            
+            csvContent += "Cota,Tipo,Nominal,Tol Min,Tol Max,Unidad";
+            for (let i = 1; i <= piezasInspeccionadas; i++) {
+                csvContent += `,Pieza ${i}`;
+            }
+            csvContent += "\n";
+
+            // Datos de cotas
+            const unidad = document.getElementById('unidadMedida').value;
+            for (let i = 1; i <= numCotas; i++) {
+                const tipo = document.getElementById(`tipo_${i}`).value;
+                const nominal = document.getElementById(`nominal_${i}`).value;
+                const tolMin = document.getElementById(`tolmin_${i}`).value;
+                const tolMax = document.getElementById(`tolmax_${i}`).value;
+                
+                csvContent += `${i},${tipo},${nominal},${tolMin},${tolMax},${unidad}`;
+                
+                for (let j = 1; j <= piezasInspeccionadas; j++) {
+                    const medicion = document.getElementById(`medicion_${i}_${j}`).value;
+                    csvContent += `,${medicion}`;
+                }
+                csvContent += "\n";
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `reporte_${datosItem.plano}_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Cerrar reporte
+        function cerrarReporte() {
+            if (confirm('¿Estás seguro de cerrar este reporte? Los cambios no guardados se perderán.')) {
+                window.close();
+            }
+        }
+
+        // Regenerar cotas cuando cambia el número
+        document.getElementById('numCotas').addEventListener('change', generarCotas);
+    </script>
+</body>
+</html>
